@@ -1,20 +1,15 @@
 KEY_NAME="parking-lot-`date +'%N'`"
 KEY_PEM="$KEY_NAME.pem"
-REPO_NAME=ParkingLotAWS
-REPO_URL=https://github.com/yanivNaor92/ParkingLotAWS.git
 
-echo "checking all necessary tools are installed" # todo: improve
+echo "checking all necessary tools are installed"
 if ! command -v jq &> /dev/null; then
     echo "jq could not be found, pleas install it and run the script again"
 else
   if ! command -v aws &> /dev/null; then
     echo "aws could not be found, pleas install it, configure your aws account, and run the script again"
-  else
-    if ! command -v aws &> /dev/null; then
-      echo "git could not be found, pleas install it and run the script again"
-    fi
   fi
 fi
+echo "all necessary tools are present"
 
 echo "creating a key pair $KEY_PEM"
 aws ec2 create-key-pair --key-name $KEY_NAME | jq -r ".KeyMaterial" > $KEY_PEM
@@ -52,8 +47,10 @@ RUN_INSTANCES=$(aws ec2 run-instances   \
     --key-name $KEY_NAME                \
     --security-groups $SEC_GRP)
 
-echo "Waiting for instance creation..."
-aws ec2 wait instance-running --instance-ids $INSTANCE_ID
+INSTANCE_ID=$(echo $RUN_INSTANCES | jq -r '.Instances[0].InstanceId')
+
+echo "Waiting for instance $INSTANCE_ID to be created..."
+aws ec2 wait  instance-status-ok --instance-ids $INSTANCE_ID
 
 PUBLIC_IP=$(aws ec2 describe-instances  --instance-ids $INSTANCE_ID |
     jq -r '.Reservations[0].Instances[0].PublicIpAddress'
@@ -62,24 +59,18 @@ PUBLIC_IP=$(aws ec2 describe-instances  --instance-ids $INSTANCE_ID |
 INSTANCE_ID=$(echo $RUN_INSTANCES | jq -r '.Instances[0].InstanceId')
 echo "New instance $INSTANCE_ID @ $PUBLIC_IP was created"
 
-echo "cloning code from remote repository"
-git clone $REPO_URL
-if [ ! -d "$REPO_NAME" ]; then
-  echo "Failed to clone the source code. aborting deployment."
-  exit
-fi
-cd $REPO_NAME || exit
-src_file_name=$(ls ./*.py)
-scp -i $KEY_PEM -o "StrictHostKeyChecking=no" -o "ConnectionAttempts=60" $src_file_name ubuntu@$PUBLIC_IP:/home/ubuntu/
-
 echo "setup production environment"
-ssh -i $KEY_PEM -o "StrictHostKeyChecking=no" -o "ConnectionAttempts=10" ubuntu@$PUBLIC_IP <<EOF
+ssh -i $KEY_PEM -o "StrictHostKeyChecking=no" -o "ConnectionAttempts=10" ubuntu@$PUBLIC_IP << "EOF"
     sudo apt update
     sudo apt-get install -y git python3-pip
     pip3 install flask pandas
+    echo "cloning code from remote repository"
+    git clone https://github.com/yanivNaor92/ParkingLotAWS.git
+    cd ParkingLotAWS || exit
+    src_file_name=$(ls ./*.py)
     # run app
-    export FLASK_APP=$src_file_name
-    nohup python3 -m flask run --host=0.0.0.0
+    server_ip=$(curl ipinfo.io/ip)
+    echo "The server is running at http://$server_ip :5000"
+    export FLASK_APP=$src_file_name; export FLASK_ENV=development; nohup python3 -m flask run --host=0.0.0.0
     exit
 EOF
-

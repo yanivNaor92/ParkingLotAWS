@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 import math
-from flask import Flask, request
+from flask import Flask, request, render_template
 import datetime
 
 app = Flask(__name__)
@@ -11,6 +11,10 @@ PLATE = "plate"
 PARKING_LOT = "parkingLot"
 ENTRY_TIME = "entryTime"
 RATE = 2.5  # Price per 15 minutes
+
+@app.route("/", methods=['GET', 'POST'])
+def home():
+    return render_template("index.html")
 
 @app.route("/entry", methods=['GET', 'POST'])
 def entry():
@@ -52,7 +56,7 @@ def save_new_parking(ticket_id, plate, parking_lot):
         print("Exception occurred while trying to save a new parking ticket:{}".format(e))
 
 def get_parking_details(ticket_id):
-    result_message = "We couldn't find your parking details. please check the your ticket id is correct"
+    result_message = "We couldn't find your parking details. please check that your ticket id is correct"
     if os.path.exists(PARKING_TICKETS_FILE):
         try:
             leave_time_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
