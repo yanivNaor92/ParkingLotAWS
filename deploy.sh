@@ -49,7 +49,7 @@ RUN_INSTANCES=$(aws ec2 run-instances   \
 
 INSTANCE_ID=$(echo $RUN_INSTANCES | jq -r '.Instances[0].InstanceId')
 
-echo "Waiting for instance $INSTANCE_ID to be created..."
+echo "Waiting for instance $INSTANCE_ID to be created... (This might take several minutes)"
 aws ec2 wait  instance-status-ok --instance-ids $INSTANCE_ID
 
 PUBLIC_IP=$(aws ec2 describe-instances  --instance-ids $INSTANCE_ID |
@@ -70,7 +70,7 @@ ssh -i $KEY_PEM -o "StrictHostKeyChecking=no" -o "ConnectionAttempts=10" ubuntu@
     src_file_name=$(ls ./*.py)
     # run app
     server_ip=$(curl ipinfo.io/ip)
-    echo "The server is running at http://$server_ip :5000"
+    echo "The server is running at http://${server_ip}:5000"
     export FLASK_APP=$src_file_name; export FLASK_ENV=development; nohup python3 -m flask run --host=0.0.0.0
     exit
 EOF
