@@ -1,9 +1,9 @@
 # ParkingLotAWS
-###A cloud-based system for managing a parking lot
+## A cloud-based system for managing a parking lot
 This repository contains a simple python code that expose two APIs and simulating managing a parking lot.  
 The code should be deployed and ran on an AWS EC2 instance.  
 
-##Prerequisites
+## Prerequisites
 1. The following tools need to be installed on your local machine in order to run and deploy this code:  
 1.1 python  
 1.2 AWS CLI  
@@ -18,17 +18,17 @@ The code should be deployed and ran on an AWS EC2 instance.
 see [AWS Configuration Basics](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html) for more details.  
 
 
-##API
+## API
 The server exposes two HTTP endpoints:  
-1. <b>POST /entry?plate=<plate-number>&parkingLot=<parking-lot-number></b>  
+1. <b>POST /entry?plate=\<plate-number\>&parkingLot=\<parking-lot-number\></b>  
    Returns a ticket id.  
    For example, POST /entry?plate=123-123-123&parkingLot=382
-2. <b>POST /exit?ticketId=<ticket-id></b>   
+2. <b>POST /exit?ticketId=\<ticket-id\></b>   
    Returns the license plate, total parked time, the parking lot id and the charge (based
    on 15 minutes increments).  
    For example, POST /exit?ticketId=1234
 
-##Deployment
+## Deployment
 The file 'deploy.sh' contains a shell script for auto-deployment to an AWS EC2 instance.  
 There is no need to create the EC2 instance in advance, the script will create it using the AWS CLI and will also take care of all the required configuration.  
 After the script will finish its run (it might take several minutes since the instance is being created at runtime) the server should already be deployed and running on your new EC2 instance.  
