@@ -38,8 +38,9 @@ def exit():
     ticket_id = request.args.get('ticketId')
     if ticket_id is None:
         return "Some of the query parameters were missing. The usage of this API is: POST /exit?ticketId=ticket-id"
+    parking_details = get_parking_details(ticket_id)
     mark_ticket_exit(ticket_id)
-    return get_parking_details(ticket_id)
+    return parking_details
 
 
 def generate_ticket_id():
@@ -74,7 +75,7 @@ def get_parking_details(ticket_id):
             parking_tickets = [i.strip().split("::") for i in open(PARKING_TICKETS_FILE, 'r').readlines()]
             parking_tickets_df = pd.DataFrame(parking_tickets,
                                               columns=[TICKET_ID, PLATE, PARKING_LOT, ENTRY_TIME, IS_OUT], dtype=str)
-            if parking_tickets_df[parking_tickets_df[TICKET_ID]==ticket_id].loc[0,IS_OUT] == TRUE_STR:
+            if parking_tickets_df[parking_tickets_df[TICKET_ID] == ticket_id].iloc[0][IS_OUT] == TRUE_STR:
                 result_message = "The car associated with this ticket id was already left the parking lot."
             else:
                 parking_details = parking_tickets_df[(parking_tickets_df[TICKET_ID] == ticket_id)]
