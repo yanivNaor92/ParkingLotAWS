@@ -74,7 +74,7 @@ def get_parking_details(ticket_id):
             parking_tickets = [i.strip().split("::") for i in open(PARKING_TICKETS_FILE, 'r').readlines()]
             parking_tickets_df = pd.DataFrame(parking_tickets,
                                               columns=[TICKET_ID, PLATE, PARKING_LOT, ENTRY_TIME, IS_OUT], dtype=str)
-            if parking_tickets_df[IS_OUT][ticket_id] is True:
+            if parking_tickets_df[parking_tickets_df[TICKET_ID]==ticket_id].loc[0,IS_OUT] == TRUE_STR:
                 result_message = "The car associated with this ticket id was already left the parking lot."
             else:
                 parking_details = parking_tickets_df[(parking_tickets_df[TICKET_ID] == ticket_id)]
