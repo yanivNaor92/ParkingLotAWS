@@ -5,16 +5,16 @@ The code should be deployed and ran on an AWS EC2 instance.
 
 ## Prerequisites
 1. The following tools need to be installed on your local machine in order to run and deploy this code:  
-1.1 python  
-1.2 AWS CLI  
-1.3 bash  
-1.4 jq  
-2. You need to have an active AWS account.  visit [Amazon.com](https://aws.amazon.com/) if you need to create one.
+1.1 python.  
+1.2 AWS CLI.  
+1.3 bash.  
+1.4 jq.  
+2. You need to have an active AWS account.  Visit [Amazon.com](https://aws.amazon.com/) if you need to create one.
 3. Configure your AWS account by running the command 'aws configure' and enter the following values:  
-3.1 AWS Access Key ID  
-3.2 AWS Secret Access Key  
-3.3 Default region name  
-3.4 Default output format  
+3.1 AWS Access Key ID.  
+3.2 AWS Secret Access Key.  
+3.3 Default region name.  
+3.4 Default output format.  
 see [AWS Configuration Basics](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html) for more details.  
 
 
