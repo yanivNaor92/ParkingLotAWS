@@ -25,8 +25,8 @@ def home():
 def entry():
     plate = request.args.get('plate')
     parking_lot = request.args.get('parkingLot')
-    if plate is None or parking_lot is None:
-        return "Some of the query parameters were missing. The usage of this API is: POST /entry?plate=plate-number&parkingLot=parking-lot-number"
+    # if plate is None or parking_lot is None:
+        # return "Some of the query parameters were missing. The usage of this API is: POST /entry?plate=plate-number&parkingLot=parking-lot-number"
 
     ticket_id = generate_ticket_id()
     save_new_parking(ticket_id, plate, parking_lot)
